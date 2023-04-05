@@ -8,6 +8,16 @@ import "openzeppelin-contracts/contracts/access/Ownable.sol";
   By default, the owner of an Ownable contract is the account that deployed it.
 */
 contract Treasury is Ownable {
+    struct Proposal {
+        uint256 id;
+        string name;
+        uint256 voteCount;
+    }
+
+    Proposal[] public proposals;
+    mapping(address => bool) public hasVoted;
+    mapping(address => uint256) public voteCounts;
+
     // Function to deposit Ether into the contract
     function deposit() external payable {
         require(
@@ -45,9 +55,49 @@ contract Treasury is Ownable {
         require(send, "To owner: Failed to send Ether");
     }
 
-
     // Function to get the contract balance
     function getBalance() external view returns (uint256) {
         return address(this).balance;
+    }
+
+    // Function to create a new proposal
+    function createProposal(string memory proposalName) external onlyOwner {
+        uint256 proposalId = proposals.length + 1;
+        Proposal memory newProposal = Proposal(proposalId, proposalName, 0);
+        proposals.push(newProposal);
+    }
+
+    // Function to vote for a proposal
+    function vote(uint256 proposalId) external {
+        require(hasVoted[msg.sender] == false, "Treasury: Already voted");
+        require(proposalId > 0 && proposalId <= proposals.length, "Treasury: Invalid proposal ID");
+
+        Proposal storage proposal = proposals[proposalId - 1];
+        proposal.voteCount += 1;
+        voteCounts[msg.sender] += 1;
+        hasVoted[msg.sender] = true;
+    }
+
+    // Function to get the vote count for a proposal
+    function getVoteCount(uint256 proposalId) external view returns (uint256) {
+        require(proposalId > 0 && proposalId <= proposals.length, "Treasury: Invalid proposal ID");
+
+        Proposal storage proposal = proposals[proposalId - 1];
+        return proposal.voteCount;
+    }
+
+    // Function to get the total number of proposals
+    function getProposalCount() external view returns (uint256) {
+        return proposals.length;
+    }
+
+    // Function to get the vote count for a voter
+    function getVoterVoteCount(address voter) external view returns (uint256) {
+        return voteCounts[voter];
+    }
+
+    // Function to check if a voter has voted
+    function hasVoted(address voter) external view returns (bool) {
+        return hasVoted[voter];
     }
 }

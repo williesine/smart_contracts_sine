@@ -2,11 +2,12 @@
 pragma solidity ^0.8.4;
 
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-
+import "./TokenPayable.sol";
 
 /*
   By default, the owner of an Ownable contract is the account that deployed it.
 */
+<<<<<<< HEAD
 contract Treasury is Ownable {
     struct Proposal {
         uint256 id;
@@ -17,6 +18,10 @@ contract Treasury is Ownable {
     Proposal[] public proposals;
     mapping(address => bool) public hasVoted;
     mapping(address => uint256) public voteCounts;
+=======
+contract Treasury is Ownable, TokenPayable {
+    constructor(address _token) TokenPayable(_token) {}
+>>>>>>> upstream/main
 
     // Function to deposit Ether into the contract
     function deposit() external payable {
@@ -24,7 +29,6 @@ contract Treasury is Ownable {
             msg.value > 0,
             "Treasury: Deposit amount should be greater than zero"
         );
-
 
         // The balance of the contract is automatically updated
     }
@@ -40,7 +44,6 @@ contract Treasury is Ownable {
             "Treasury: Not enough balance to withdraw"
         );
 
-
         (bool send, ) = receiver.call{value: amount}("");
         require(send, "To receiver: Failed to send Ether");
     }
@@ -49,7 +52,6 @@ contract Treasury is Ownable {
     function withdrawAll() external onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "Treasury: No balance to withdraw");
-
 
         (bool send, ) = msg.sender.call{value: balance}("");
         require(send, "To owner: Failed to send Ether");
@@ -60,6 +62,7 @@ contract Treasury is Ownable {
         return address(this).balance;
     }
 
+<<<<<<< HEAD
     // Function to create a new proposal
     function createProposal(string memory proposalName) external onlyOwner {
         uint256 proposalId = proposals.length + 1;
@@ -99,5 +102,29 @@ contract Treasury is Ownable {
     // Function to check if a voter has voted
     function hasVoted(address voter) external view returns (bool) {
         return hasVoted[voter];
+=======
+    // TokenPayable functions
+    function approveToken(uint256 _amount) external onlyOwner {
+        _approveToken(_amount);
+    }
+
+    function getTokenBalance() external view returns (uint256) {
+        return _getTokenBalance();
+    }
+
+    function depositToken(uint256 _amount) external {
+        _depositToken(_amount);
+    }
+
+    function withdrawToken(
+        uint256 _amount,
+        address _receiver
+    ) external onlyOwner {
+        _withdrawToken(_amount, _receiver);
+    }
+
+    function withdrawAllToken() external onlyOwner {
+        _withdrawAllToken();
+>>>>>>> upstream/main
     }
 }

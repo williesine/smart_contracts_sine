@@ -1,5 +1,6 @@
 ## ESG PROPOSAL README
 
+### TO RUN: COMPILE TREASURY.SOL
 
 ##### Group Members: Willie Sine & Sam Navias Project 
 

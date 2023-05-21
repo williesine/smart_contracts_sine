@@ -12,4 +12,4 @@
 
 #### Deployment Link: https://sepolia.etherscan.io/address/0x22f58C1B71fB5Dd86Ee8F2959df9602b06f3A4E5#code
 
-#### Link to Video: 
+#### Link to Video: https://youtu.be/1mLXSq-PPDQ
